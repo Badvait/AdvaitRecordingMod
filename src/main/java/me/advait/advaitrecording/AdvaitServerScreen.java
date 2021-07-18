@@ -1,8 +1,5 @@
 package me.advait.advaitrecording;
 
-import me.advait.advaitrecording.client.AdvaitRecordingClient;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.*;
 import net.minecraft.client.gui.screen.multiplayer.MultiplayerScreen;
@@ -22,6 +19,7 @@ import java.util.List;
 public class AdvaitServerScreen extends MultiplayerScreen {
 
     private static final Logger LOGGER = LogManager.getLogger();
+    private final MinecraftClient client;
     private final MultiplayerServerListPinger serverListPinger = new MultiplayerServerListPinger();
     private final Screen parent;
     protected MultiplayerServerListWidget serverListWidget;
@@ -38,15 +36,16 @@ public class AdvaitServerScreen extends MultiplayerScreen {
 
     public AdvaitServerScreen(Screen parent) {
         super(parent);
+        this.client = MinecraftClient.getInstance();
         this.parent = parent;
-        this.client = AdvaitRecordingClient.minecraftClient;;
         this.serverListWidget = new MultiplayerServerListWidget(this, this.client, this.width, this.height, 32, this.height - 64, 36);
         this.serverList = new AdvaitServerList();
         init();
     }
 
     protected void init() {
-        super.init();
+        if (MinecraftClient.getInstance() == null) System.out.println("bro why tf is it null");
+        //super.init();
         this.client.keyboard.setRepeatEvents(true);
         if (this.initialized) {
             this.serverListWidget.updateSize(this.width, this.height, 32, this.height - 64);
@@ -112,7 +111,8 @@ public class AdvaitServerScreen extends MultiplayerScreen {
     }
 
     public void tick() {
-        super.tick();
+        //if (this.lanServers == null || this.lanServerDetector == null) return;
+        //super.tick();
         if (this.lanServers.needsUpdate()) {
             List<LanServerInfo> list = this.lanServers.getServers();
             this.lanServers.markClean();
@@ -205,7 +205,7 @@ public class AdvaitServerScreen extends MultiplayerScreen {
         this.renderBackground(matrices);
         this.serverListWidget.render(matrices, mouseX, mouseY, delta);
         drawCenteredText(matrices, this.textRenderer, this.title, this.width / 2, 20, 16777215);
-        super.render(matrices, mouseX, mouseY, delta);
+        //super.render(matrices, mouseX, mouseY, delta);
         if (this.tooltipText != null) {
             this.renderTooltip(matrices, this.tooltipText, mouseX, mouseY);
         }

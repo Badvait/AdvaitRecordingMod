@@ -25,12 +25,12 @@ import java.util.List;
 public class AdvaitServerList extends ServerList {
 
     private static final Logger LOGGER = LogManager.getLogger();
-    private final MinecraftClient client = AdvaitRecordingClient.minecraftClient;
+    private final MinecraftClient client;
     private final List<ServerInfo> servers = Lists.newArrayList();
 
     public AdvaitServerList() {
-        super(AdvaitRecordingClient.minecraftClient);
-        //this.loadFile();
+        super(MinecraftClient.getInstance());
+        this.client = MinecraftClient.getInstance();
     }
 
     public void loadFile() {
@@ -41,7 +41,7 @@ public class AdvaitServerList extends ServerList {
                 this.servers.clear();
             }
             if (client == null) System.out.println("client is null");
-            NbtCompound nbtCompound = NbtIo.read(new File(this.client.runDirectory, "advait-servers.dat"));
+            NbtCompound nbtCompound = NbtIo.read(new File(MinecraftClient.getInstance().runDirectory, "advait-servers.dat"));
             if (nbtCompound == null) {
                 System.out.println("nbt compound is null");
                 return;
@@ -109,7 +109,7 @@ public class AdvaitServerList extends ServerList {
     }
 
     public static void updateServerListEntry(ServerInfo e) {
-        ServerList serverList = new ServerList(AdvaitRecordingClient.minecraftClient);
+        ServerList serverList = new ServerList(MinecraftClient.getInstance());
         serverList.loadFile();
 
         for(int i = 0; i < serverList.size(); ++i) {
