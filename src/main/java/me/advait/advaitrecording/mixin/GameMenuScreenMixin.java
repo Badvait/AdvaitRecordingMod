@@ -61,7 +61,7 @@ public class GameMenuScreenMixin extends Screen {
             } else if (bl2) {
                 this.client.setScreen(new RealmsMainScreen(titleScreen));
             } else {
-                this.client.setScreen(new MultiplayerScreen(titleScreen));
+                this.client.setScreen(new AdvaitServerScreen(titleScreen));
             }
 
         }));

@@ -127,7 +127,7 @@ public class AdvaitServerScreen extends Screen {
     }
 
     private void refresh() {
-        this.client.setScreen(new net.minecraft.client.gui.screen.multiplayer.MultiplayerScreen(this.parent));
+        this.client.setScreen(new AdvaitServerScreen(this.parent));
     }
 
     private void removeEntry(boolean confirmedAction) {
