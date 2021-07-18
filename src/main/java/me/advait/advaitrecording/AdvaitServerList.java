@@ -1,7 +1,5 @@
 package me.advait.advaitrecording;
 
-import com.google.common.collect.Lists;
-import me.advait.advaitrecording.client.AdvaitRecordingClient;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -13,9 +11,6 @@ import net.minecraft.nbt.NbtList;
 import net.minecraft.util.Util;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 
 import java.io.File;
 import java.util.ArrayList;
