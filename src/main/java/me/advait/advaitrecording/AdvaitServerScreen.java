@@ -40,7 +40,7 @@ public class AdvaitServerScreen extends MultiplayerScreen {
         this.parent = parent;
         this.serverListWidget = new MultiplayerServerListWidget(this, this.client, this.width, this.height, 32, this.height - 64, 36);
         this.serverList = new AdvaitServerList();
-        init();
+        //init();
     }
 
     protected void init() {
@@ -183,9 +183,13 @@ public class AdvaitServerScreen extends MultiplayerScreen {
     }
 
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        /*
         if (super.keyPressed(keyCode, scanCode, modifiers)) {
             return true;
-        } else if (keyCode == 294) {
+        } else
+
+         */
+        if (keyCode == 294) {
             this.refresh();
             return true;
         } else if (this.serverListWidget.getSelectedOrNull() != null) {
