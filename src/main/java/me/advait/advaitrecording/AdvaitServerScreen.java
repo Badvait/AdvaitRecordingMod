@@ -1,6 +1,8 @@
 package me.advait.advaitrecording;
 
 import me.advait.advaitrecording.client.AdvaitRecordingClient;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.*;
 import net.minecraft.client.gui.screen.multiplayer.MultiplayerScreen;
