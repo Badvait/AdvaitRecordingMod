@@ -1,5 +1,6 @@
 package me.advait.advaitrecording.mixin;
 
+import me.advait.advaitrecording.AdvaitServerScreen;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.*;
@@ -35,6 +36,9 @@ public class GameMenuScreenMixin extends Screen {
         }));
         this.addDrawableChild(new ButtonWidget(this.width / 2 + 4, this.height / 4 + 48 + -16, 98, 20, new TranslatableText("gui.stats"), (button) -> {
             this.client.setScreen(new StatsScreen(this, this.client.player.getStatHandler()));
+        }));
+        this.addDrawableChild(new ButtonWidget(this.width / 2 - 102, this.height / 4 + 72 + -16, 204, 20, new TranslatableText("Advait's Servers"), (button) -> {
+            this.client.setScreen(new AdvaitServerScreen(this));
         }));
         this.addDrawableChild(new ButtonWidget(this.width / 2 - 102, this.height / 4 + 96 + -16, 98, 20, new TranslatableText("menu.options"), (button) -> {
             this.client.setScreen(new OptionsScreen(this, this.client.options));

@@ -1,9 +1,9 @@
 package me.advait.advaitrecording;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.*;
-import net.minecraft.client.gui.screen.multiplayer.MultiplayerScreen;
-import net.minecraft.client.gui.screen.multiplayer.MultiplayerServerListWidget;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.network.*;
 import net.minecraft.client.option.ServerList;
@@ -16,14 +16,14 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
-public class AdvaitServerScreen extends MultiplayerScreen {
-
+@Environment(EnvType.CLIENT)
+public class AdvaitServerScreen extends Screen {
     private static final Logger LOGGER = LogManager.getLogger();
-    private final MinecraftClient client;
     private final MultiplayerServerListPinger serverListPinger = new MultiplayerServerListPinger();
+    private final MinecraftClient client;
     private final Screen parent;
-    protected MultiplayerServerListWidget serverListWidget;
-    private final AdvaitServerList serverList;
+    protected AdvaitServerListWidget serverListWidget;
+    private AdvaitServerList serverList;
     private ButtonWidget buttonEdit;
     private ButtonWidget buttonJoin;
     private ButtonWidget buttonDelete;
@@ -33,24 +33,20 @@ public class AdvaitServerScreen extends MultiplayerScreen {
     private LanServerQueryManager.LanServerDetector lanServerDetector;
     private boolean initialized;
 
-
     public AdvaitServerScreen(Screen parent) {
-        super(parent);
-        this.client = MinecraftClient.getInstance();
+        super(new TranslatableText("Advait's Servers"));
         this.parent = parent;
-        this.serverListWidget = new MultiplayerServerListWidget(this, this.client, this.width, this.height, 32, this.height - 64, 36);
-        this.serverList = new AdvaitServerList();
-        //init();
+        this.client = MinecraftClient.getInstance();
     }
 
     protected void init() {
-        if (MinecraftClient.getInstance() == null) System.out.println("bro why tf is it null");
-        //super.init();
+        super.init();
         this.client.keyboard.setRepeatEvents(true);
         if (this.initialized) {
             this.serverListWidget.updateSize(this.width, this.height, 32, this.height - 64);
         } else {
             this.initialized = true;
+            this.serverList = new AdvaitServerList();
             this.serverList.loadFile();
             this.lanServers = new LanServerQueryManager.LanServerEntryList();
 
@@ -61,7 +57,7 @@ public class AdvaitServerScreen extends MultiplayerScreen {
                 LOGGER.warn("Unable to start LAN server detection: {}", var2.getMessage());
             }
 
-            this.serverListWidget = new MultiplayerServerListWidget(this, this.client, this.width, this.height, 32, this.height - 64, 36);
+            this.serverListWidget = new AdvaitServerListWidget(this, this.client, this.width, this.height, 32, this.height - 64, 36);
             this.serverListWidget.setServers(this.serverList);
         }
 
@@ -78,9 +74,9 @@ public class AdvaitServerScreen extends MultiplayerScreen {
             this.client.setScreen(new AddServerScreen(this, this::addEntry, this.selectedEntry));
         }));
         this.buttonEdit = (ButtonWidget)this.addDrawableChild(new ButtonWidget(this.width / 2 - 154, this.height - 28, 70, 20, new TranslatableText("selectServer.edit"), (button) -> {
-            MultiplayerServerListWidget.Entry entry = (MultiplayerServerListWidget.Entry)this.serverListWidget.getSelectedOrNull();
-            if (entry instanceof MultiplayerServerListWidget.ServerEntry) {
-                ServerInfo serverInfo = ((MultiplayerServerListWidget.ServerEntry)entry).getServer();
+            AdvaitServerListWidget.Entry entry = (AdvaitServerListWidget.Entry)this.serverListWidget.getSelectedOrNull();
+            if (entry instanceof AdvaitServerListWidget.ServerEntry) {
+                ServerInfo serverInfo = ((AdvaitServerListWidget.ServerEntry)entry).getServer();
                 this.selectedEntry = new ServerInfo(serverInfo.name, serverInfo.address, false);
                 this.selectedEntry.copyFrom(serverInfo);
                 this.client.setScreen(new AddServerScreen(this, this::editEntry, this.selectedEntry));
@@ -88,9 +84,9 @@ public class AdvaitServerScreen extends MultiplayerScreen {
 
         }));
         this.buttonDelete = (ButtonWidget)this.addDrawableChild(new ButtonWidget(this.width / 2 - 74, this.height - 28, 70, 20, new TranslatableText("selectServer.delete"), (button) -> {
-            MultiplayerServerListWidget.Entry entry = (MultiplayerServerListWidget.Entry)this.serverListWidget.getSelectedOrNull();
-            if (entry instanceof MultiplayerServerListWidget.ServerEntry) {
-                String string = ((MultiplayerServerListWidget.ServerEntry)entry).getServer().name;
+            AdvaitServerListWidget.Entry entry = (AdvaitServerListWidget.Entry)this.serverListWidget.getSelectedOrNull();
+            if (entry instanceof AdvaitServerListWidget.ServerEntry) {
+                String string = ((AdvaitServerListWidget.ServerEntry)entry).getServer().name;
                 if (string != null) {
                     Text text = new TranslatableText("selectServer.deleteQuestion");
                     Text text2 = new TranslatableText("selectServer.deleteWarning", new Object[]{string});
@@ -111,8 +107,7 @@ public class AdvaitServerScreen extends MultiplayerScreen {
     }
 
     public void tick() {
-        //if (this.lanServers == null || this.lanServerDetector == null) return;
-        //super.tick();
+        super.tick();
         if (this.lanServers.needsUpdate()) {
             List<LanServerInfo> list = this.lanServers.getServers();
             this.lanServers.markClean();
@@ -133,15 +128,15 @@ public class AdvaitServerScreen extends MultiplayerScreen {
     }
 
     private void refresh() {
-        this.client.setScreen(new AdvaitServerScreen(this.parent));
+        this.client.setScreen(new net.minecraft.client.gui.screen.multiplayer.MultiplayerScreen(this.parent));
     }
 
     private void removeEntry(boolean confirmedAction) {
-        MultiplayerServerListWidget.Entry entry = (MultiplayerServerListWidget.Entry)this.serverListWidget.getSelectedOrNull();
-        if (confirmedAction && entry instanceof MultiplayerServerListWidget.ServerEntry) {
-            this.serverList.remove(((MultiplayerServerListWidget.ServerEntry)entry).getServer());
+        AdvaitServerListWidget.Entry entry = (AdvaitServerListWidget.Entry)this.serverListWidget.getSelectedOrNull();
+        if (confirmedAction && entry instanceof AdvaitServerListWidget.ServerEntry) {
+            this.serverList.remove(((AdvaitServerListWidget.ServerEntry)entry).getServer());
             this.serverList.saveFile();
-            this.serverListWidget.setSelected((MultiplayerServerListWidget.Entry)null);
+            this.serverListWidget.setSelected((AdvaitServerListWidget.Entry)null);
             this.serverListWidget.setServers(this.serverList);
         }
 
@@ -149,9 +144,9 @@ public class AdvaitServerScreen extends MultiplayerScreen {
     }
 
     private void editEntry(boolean confirmedAction) {
-        MultiplayerServerListWidget.Entry entry = (MultiplayerServerListWidget.Entry)this.serverListWidget.getSelectedOrNull();
-        if (confirmedAction && entry instanceof MultiplayerServerListWidget.ServerEntry) {
-            ServerInfo serverInfo = ((MultiplayerServerListWidget.ServerEntry)entry).getServer();
+        AdvaitServerListWidget.Entry entry = (AdvaitServerListWidget.Entry)this.serverListWidget.getSelectedOrNull();
+        if (confirmedAction && entry instanceof AdvaitServerListWidget.ServerEntry) {
+            ServerInfo serverInfo = ((AdvaitServerListWidget.ServerEntry)entry).getServer();
             serverInfo.name = this.selectedEntry.name;
             serverInfo.address = this.selectedEntry.address;
             serverInfo.copyFrom(this.selectedEntry);
@@ -166,7 +161,7 @@ public class AdvaitServerScreen extends MultiplayerScreen {
         if (confirmedAction) {
             this.serverList.add(this.selectedEntry);
             this.serverList.saveFile();
-            this.serverListWidget.setSelected((MultiplayerServerListWidget.Entry)null);
+            this.serverListWidget.setSelected((AdvaitServerListWidget.Entry)null);
             this.serverListWidget.setServers(this.serverList);
         }
 
@@ -183,13 +178,9 @@ public class AdvaitServerScreen extends MultiplayerScreen {
     }
 
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        /*
         if (super.keyPressed(keyCode, scanCode, modifiers)) {
             return true;
-        } else
-
-         */
-        if (keyCode == 294) {
+        } else if (keyCode == 294) {
             this.refresh();
             return true;
         } else if (this.serverListWidget.getSelectedOrNull() != null) {
@@ -209,7 +200,7 @@ public class AdvaitServerScreen extends MultiplayerScreen {
         this.renderBackground(matrices);
         this.serverListWidget.render(matrices, mouseX, mouseY, delta);
         drawCenteredText(matrices, this.textRenderer, this.title, this.width / 2, 20, 16777215);
-        //super.render(matrices, mouseX, mouseY, delta);
+        super.render(matrices, mouseX, mouseY, delta);
         if (this.tooltipText != null) {
             this.renderTooltip(matrices, this.tooltipText, mouseX, mouseY);
         }
@@ -217,13 +208,16 @@ public class AdvaitServerScreen extends MultiplayerScreen {
     }
 
     public void connect() {
-        MultiplayerServerListWidget.Entry entry = (MultiplayerServerListWidget.Entry)this.serverListWidget.getSelectedOrNull();
-        if (entry instanceof MultiplayerServerListWidget.ServerEntry) {
-            this.connect(((MultiplayerServerListWidget.ServerEntry)entry).getServer());
-        } else if (entry instanceof MultiplayerServerListWidget.LanServerEntry) {
-            LanServerInfo lanServerInfo = ((MultiplayerServerListWidget.LanServerEntry)entry).getLanServerEntry();
+        AdvaitServerListWidget.Entry entry = (AdvaitServerListWidget.Entry)this.serverListWidget.getSelectedOrNull();
+        if (entry instanceof AdvaitServerListWidget.ServerEntry) {
+            this.connect(((AdvaitServerListWidget.ServerEntry)entry).getServer());
+        }
+        /*else if (entry instanceof AdvaitServerListWidget.LanServerEntry) {
+            LanServerInfo lanServerInfo = ((AdvaitServerListWidget.LanServerEntry)entry).getLanServerEntry();
             this.connect(new ServerInfo(lanServerInfo.getMotd(), lanServerInfo.getAddressPort(), true));
         }
+
+         */
 
     }
 
@@ -231,62 +225,19 @@ public class AdvaitServerScreen extends MultiplayerScreen {
         ConnectScreen.connect(this, this.client, ServerAddress.parse(entry.address), entry);
     }
 
-    public void select(MultiplayerServerListWidget.Entry entry) {
+    public void select(AdvaitServerListWidget.Entry entry) {
         this.serverListWidget.setSelected(entry);
         this.updateButtonActivationStates();
     }
 
     protected void updateButtonActivationStates() {
-        //
-        this.buttonJoin = (ButtonWidget)this.addDrawableChild(new ButtonWidget(this.width / 2 - 154, this.height - 52, 100, 20, new TranslatableText("selectServer.select"), (button) -> {
-            this.connect();
-        }));
-        this.addDrawableChild(new ButtonWidget(this.width / 2 - 50, this.height - 52, 100, 20, new TranslatableText("selectServer.direct"), (button) -> {
-            this.selectedEntry = new ServerInfo(I18n.translate("selectServer.defaultName", new Object[0]), "", false);
-            this.client.setScreen(new DirectConnectScreen(this, this::directConnect, this.selectedEntry));
-        }));
-        this.addDrawableChild(new ButtonWidget(this.width / 2 + 4 + 50, this.height - 52, 100, 20, new TranslatableText("selectServer.add"), (button) -> {
-            this.selectedEntry = new ServerInfo(I18n.translate("selectServer.defaultName", new Object[0]), "", false);
-            this.client.setScreen(new AddServerScreen(this, this::addEntry, this.selectedEntry));
-        }));
-        this.buttonEdit = (ButtonWidget)this.addDrawableChild(new ButtonWidget(this.width / 2 - 154, this.height - 28, 70, 20, new TranslatableText("selectServer.edit"), (button) -> {
-            MultiplayerServerListWidget.Entry entry = (MultiplayerServerListWidget.Entry)this.serverListWidget.getSelectedOrNull();
-            if (entry instanceof MultiplayerServerListWidget.ServerEntry) {
-                ServerInfo serverInfo = ((MultiplayerServerListWidget.ServerEntry)entry).getServer();
-                this.selectedEntry = new ServerInfo(serverInfo.name, serverInfo.address, false);
-                this.selectedEntry.copyFrom(serverInfo);
-                this.client.setScreen(new AddServerScreen(this, this::editEntry, this.selectedEntry));
-            }
-
-        }));
-        this.buttonDelete = (ButtonWidget)this.addDrawableChild(new ButtonWidget(this.width / 2 - 74, this.height - 28, 70, 20, new TranslatableText("selectServer.delete"), (button) -> {
-            MultiplayerServerListWidget.Entry entry = (MultiplayerServerListWidget.Entry)this.serverListWidget.getSelectedOrNull();
-            if (entry instanceof MultiplayerServerListWidget.ServerEntry) {
-                String string = ((MultiplayerServerListWidget.ServerEntry)entry).getServer().name;
-                if (string != null) {
-                    Text text = new TranslatableText("selectServer.deleteQuestion");
-                    Text text2 = new TranslatableText("selectServer.deleteWarning", new Object[]{string});
-                    Text text3 = new TranslatableText("selectServer.deleteButton");
-                    Text text4 = ScreenTexts.CANCEL;
-                    this.client.setScreen(new ConfirmScreen(this::removeEntry, text, text2, text3, text4));
-                }
-            }
-
-        }));
-        this.addDrawableChild(new ButtonWidget(this.width / 2 + 4, this.height - 28, 70, 20, new TranslatableText("selectServer.refresh"), (button) -> {
-            this.refresh();
-        }));
-        this.addDrawableChild(new ButtonWidget(this.width / 2 + 4 + 76, this.height - 28, 75, 20, ScreenTexts.CANCEL, (button) -> {
-            this.client.setScreen(this.parent);
-        }));
-        //
         this.buttonJoin.active = false;
         this.buttonEdit.active = false;
         this.buttonDelete.active = false;
-        MultiplayerServerListWidget.Entry entry = (MultiplayerServerListWidget.Entry)this.serverListWidget.getSelectedOrNull();
-        if (entry != null && !(entry instanceof MultiplayerServerListWidget.ScanningEntry)) {
+        AdvaitServerListWidget.Entry entry = (AdvaitServerListWidget.Entry)this.serverListWidget.getSelectedOrNull();
+        if (entry != null && !(entry instanceof AdvaitServerListWidget.ScanningEntry)) {
             this.buttonJoin.active = true;
-            if (entry instanceof MultiplayerServerListWidget.ServerEntry) {
+            if (entry instanceof AdvaitServerListWidget.ServerEntry) {
                 this.buttonEdit.active = true;
                 this.buttonDelete.active = true;
             }
@@ -302,8 +253,7 @@ public class AdvaitServerScreen extends MultiplayerScreen {
         this.tooltipText = tooltipText;
     }
 
-    public ServerList getServerList() {
+    public AdvaitServerList getServerList() {
         return this.serverList;
     }
-
 }

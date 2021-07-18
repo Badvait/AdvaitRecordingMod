@@ -18,6 +18,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -26,7 +27,7 @@ public class AdvaitServerList extends ServerList {
 
     private static final Logger LOGGER = LogManager.getLogger();
     private final MinecraftClient client;
-    private final List<ServerInfo> servers = Lists.newArrayList();
+    private final List<ServerInfo> servers = new ArrayList<>();
 
     public AdvaitServerList() {
         super(MinecraftClient.getInstance());
@@ -35,15 +36,11 @@ public class AdvaitServerList extends ServerList {
 
     public void loadFile() {
         try {
-            if (this.servers == null) System.out.println("null servers");
             if (this.servers != null) {
-                System.out.println("not null servers");
                 this.servers.clear();
             }
-            if (client == null) System.out.println("client is null");
             NbtCompound nbtCompound = NbtIo.read(new File(MinecraftClient.getInstance().runDirectory, "advait-servers.dat"));
             if (nbtCompound == null) {
-                System.out.println("nbt compound is null");
                 return;
             }
 
