@@ -1,5 +1,6 @@
 package me.advait.advaitrecording;
 
+import me.advait.advaitrecording.mixin.AdvaitServerList;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.*;
 import net.minecraft.client.gui.screen.multiplayer.MultiplayerScreen;

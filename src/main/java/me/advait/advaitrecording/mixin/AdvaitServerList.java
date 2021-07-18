@@ -1,4 +1,4 @@
-package me.advait.advaitrecording;
+package me.advait.advaitrecording.mixin;
 
 import com.google.common.collect.Lists;
 import net.fabricmc.api.EnvType;
