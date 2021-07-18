@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "me.advait.advaitrecording.mixin",
+  "compatibilityLevel": "JAVA_16",
+  "mixins": [
+    "DebugHudMixin",
+    "GameMenuScreenMixin",
+    "TitleScreenMixin"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
