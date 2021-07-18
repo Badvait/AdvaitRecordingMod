@@ -1,5 +1,6 @@
 package me.advait.advaitrecording;
 
+import me.advait.advaitrecording.client.AdvaitRecordingClient;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.*;
 import net.minecraft.client.gui.screen.multiplayer.MultiplayerScreen;
@@ -36,7 +37,7 @@ public class AdvaitServerScreen extends MultiplayerScreen {
     public AdvaitServerScreen(Screen parent) {
         super(parent);
         this.parent = parent;
-        this.client = MinecraftClient.getInstance();
+        this.client = AdvaitRecordingClient.minecraftClient;;
         this.serverListWidget = new MultiplayerServerListWidget(this, this.client, this.width, this.height, 32, this.height - 64, 36);
         this.serverList = new AdvaitServerList();
         init();

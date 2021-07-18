@@ -1,6 +1,7 @@
 package me.advait.advaitrecording;
 
 import com.google.common.collect.Lists;
+import me.advait.advaitrecording.client.AdvaitRecordingClient;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -24,12 +25,12 @@ import java.util.List;
 public class AdvaitServerList extends ServerList {
 
     private static final Logger LOGGER = LogManager.getLogger();
-    private final MinecraftClient client = MinecraftClient.getInstance();
+    private final MinecraftClient client = AdvaitRecordingClient.minecraftClient;
     private final List<ServerInfo> servers = Lists.newArrayList();
 
     public AdvaitServerList() {
-        super(MinecraftClient.getInstance());
-        this.loadFile();
+        super(AdvaitRecordingClient.minecraftClient);
+        //this.loadFile();
     }
 
     public void loadFile() {
@@ -108,7 +109,7 @@ public class AdvaitServerList extends ServerList {
     }
 
     public static void updateServerListEntry(ServerInfo e) {
-        ServerList serverList = new ServerList(MinecraftClient.getInstance());
+        ServerList serverList = new ServerList(AdvaitRecordingClient.minecraftClient);
         serverList.loadFile();
 
         for(int i = 0; i < serverList.size(); ++i) {
