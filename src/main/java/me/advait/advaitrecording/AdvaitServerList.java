@@ -1,4 +1,4 @@
-package me.advait.advaitrecording.mixin;
+package me.advait.advaitrecording;
 
 import com.google.common.collect.Lists;
 import net.fabricmc.api.EnvType;
@@ -21,25 +21,28 @@ import java.util.Iterator;
 import java.util.List;
 
 @Environment(EnvType.CLIENT)
-@Mixin(ServerList.class)
-public class AdvaitServerList {
+public class AdvaitServerList extends ServerList {
 
+    private static final Logger LOGGER = LogManager.getLogger();
+    private final MinecraftClient client = MinecraftClient.getInstance();
+    private final List<ServerInfo> servers = Lists.newArrayList();
 
-    @Shadow @Final private List<ServerInfo> servers;
-
-    @Shadow @Final private MinecraftClient client;
-
-    @Shadow @Final private static Logger LOGGER;
-
-    public AdvaitServerList(MinecraftClient client) {
+    public AdvaitServerList() {
+        super(MinecraftClient.getInstance());
         this.loadFile();
     }
 
     public void loadFile() {
         try {
-            this.servers.clear();
+            if (this.servers == null) System.out.println("null servers");
+            if (this.servers != null) {
+                System.out.println("not null servers");
+                this.servers.clear();
+            }
+            if (client == null) System.out.println("client is null");
             NbtCompound nbtCompound = NbtIo.read(new File(this.client.runDirectory, "advait-servers.dat"));
             if (nbtCompound == null) {
+                System.out.println("nbt compound is null");
                 return;
             }
 
